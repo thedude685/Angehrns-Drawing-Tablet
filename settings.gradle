@@ -1,0 +1,2 @@
+rootProject.name = "Angehrns_Drawing_Tablet"
+include ':app'
