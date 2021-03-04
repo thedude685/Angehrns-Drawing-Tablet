@@ -2,6 +2,8 @@ package ch.zli.angehrns_drawing_tablet;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -133,24 +135,50 @@ public class MainActivity extends AppCompatActivity {
         int color = SimpleDrawingView.drawPaint.getColor();
 
         SimpleDrawingView view = findViewById(R.id.simpleDrawingView1);
+        boolean hasColor = false;
 
         //common false inputs will be validated to make user experience friendlier
-        if (voiceInput.contains("red") || voiceInput.contains("rhett") || voiceInput.contains("rent") || voiceInput.contains("right")) {
+        if (voiceInput.contains("red") || voiceInput.contains("rhett") || voiceInput.contains("rent") || voiceInput.contains("right") || voiceInput.contains("wet")) {
             color = Color.RED;
-        } else if (voiceInput.contains("blue")) {
+            hasColor = true;
+        } else if (voiceInput.contains("blue") || voiceInput.contains("peru")) {
             color = Color.BLUE;
+            hasColor = true;
         } else if (voiceInput.contains("green") || voiceInput.contains("kareem")) {
             color = Color.GREEN;
+            hasColor = true;
         } else if (voiceInput.contains("yellow")) {
             color = Color.YELLOW;
-        } else if (voiceInput.contains("white")) {
-            color = Color.WHITE;
+            hasColor = true;
+        } else if (voiceInput.contains("gray")) {
+            color = Color.GRAY;
+            hasColor = true;
+        } else if (voiceInput.contains("cyan")) {
+            color = Color.CYAN;
+            hasColor = true;
+        } else if (voiceInput.contains("magenta") || voiceInput.contains("purple")) {
+            color = Color.MAGENTA;
+            hasColor = true;
+        } else if (voiceInput.contains("black")) {
+            color = Color.BLACK;
+            hasColor = true;
+        } else if (voiceInput.contains("dark gray")) {
+            color = Color.DKGRAY;
+            hasColor = true;
+        } else if (voiceInput.contains("light gray")) {
+            color = Color.LTGRAY;
+            hasColor = true;
+        }else if(voiceInput.contains("save") || voiceInput.contains("safe") || voiceInput.contains("spades")){
+            Bitmap bitmap = view.viewToBitmap(view);
         }
 
-        if (voiceInput.contains("background") || voiceInput.contains("back from") || voiceInput.contains("spectrum") || voiceInput.contains("back rub") || voiceInput.contains("next round") || voiceInput.contains("text round")) {
+        if (hasColor && voiceInput.contains("background") || voiceInput.contains("back from") || voiceInput.contains("spectrum") || voiceInput.contains("back rub") || voiceInput.contains("next round") || voiceInput.contains("text round")) {
             view.getRootView().setBackgroundColor(color);
         } else {
             SimpleDrawingView.drawPaint.setColor(color);
+        }
+        if (voiceInput.contains("clear")) {
+            view.clear();
         }
     }
 }

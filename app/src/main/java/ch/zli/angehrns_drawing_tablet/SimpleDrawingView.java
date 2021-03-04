@@ -1,6 +1,7 @@
 package ch.zli.angehrns_drawing_tablet;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -71,6 +72,16 @@ public class SimpleDrawingView extends View {
         path_color_list.add(new Pair<>(path, drawPaint.getColor()));
 
         return true;
+    }
+
+    public void clear(){
+        path_color_list.clear();
+    }
+
+    public Bitmap viewToBitmap(View view) {
+        return Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+        //Canvas canvas = new Canvas(bitmap);
+        //view.draw(canvas);
     }
 }
 
