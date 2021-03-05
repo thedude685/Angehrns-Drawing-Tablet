@@ -201,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void tweet(String filepath){
 
+        saveImage(findViewById(R.id.simpleDrawingView1));
         new Thread(() -> TwitterPost.tweet(filepath)).start();
     }
 

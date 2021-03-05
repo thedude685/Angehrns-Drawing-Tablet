@@ -12,10 +12,10 @@ import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterPost {
 
-    static String consumerKeyStr = "2SWQWE4GqNKY1IBachVGFOt8A";
-    static String consumerSecretStr = "6eeX9Kj7ENZSHbXfvep0gsRGzI4Poyec3rwWMCEDbHwGWZPtBn";
-    static String accessTokenStr = "1367612466356752388-wukgGrHGnPewWPECA0iSswCui3kUuJ";
-    static String accessTokenSecretStr = "skvr31c95hmkF0e0assj53knaUWhWGLxtHTNf1LLK92h3 ";
+    static String consumerKeyStr = "c7cU2exU3he9ZVULpgXSRgkLp";
+    static String consumerSecretStr = "QSb5gyFhTP8qmtU0RJBKLhl1QRd44EKYEuOqDRfcExicntUCcI";
+    static String accessTokenStr = "1367612466356752388-R0cjpQqsEK9GqTOflJ3TJnOs6OMuwS";
+    static String accessTokenSecretStr = "Q7BeZXe8dH9RRP7PAWe7H6KJfN5DCAIIqIhQHBxVBci6U";
 
     public static void tweet(String filepath) {
 
@@ -38,7 +38,7 @@ public class TwitterPost {
             File file = new File(filepath);
 
             StatusUpdate status = new StatusUpdate("Hey I'm drawing with Angehrns_drawing_tablet");
-            status.setMedia(file); // set the image to be uploaded here.
+            status.setMedia(file);
             twitter.updateStatus(status);
 
         } catch (TwitterException te) {
