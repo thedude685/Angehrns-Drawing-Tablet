@@ -6,8 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.MotionEvent;
@@ -19,7 +17,7 @@ import java.util.List;
 public class SimpleDrawingView extends View {
     public static Paint drawPaint;
     private Path path = new Path();
-    List<Pair<Path, Integer>> path_color_list = new ArrayList<>();
+    List<Pair<Path, Integer>> pathColorList = new ArrayList<>();
 
     public SimpleDrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -42,7 +40,7 @@ public class SimpleDrawingView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        for (Pair<Path, Integer> path_color_entry : path_color_list) {
+        for (Pair<Path, Integer> path_color_entry : pathColorList) {
             drawPaint.setColor(path_color_entry.second);
             canvas.drawPath(path_color_entry.first, drawPaint);
         }
@@ -69,13 +67,13 @@ public class SimpleDrawingView extends View {
         // Force a view to draw again
         postInvalidate();
 
-        path_color_list.add(new Pair<>(path, drawPaint.getColor()));
+        pathColorList.add(new Pair<>(path, drawPaint.getColor()));
 
         return true;
     }
 
     public void clear(){
-        path_color_list.clear();
+        pathColorList.clear();
     }
 
     public Bitmap viewToBitmap(View view) {

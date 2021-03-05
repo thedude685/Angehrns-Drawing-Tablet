@@ -2,6 +2,8 @@ package ch.zli.angehrns_drawing_tablet;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,9 +18,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -27,8 +31,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Locale;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -168,8 +180,42 @@ public class MainActivity extends AppCompatActivity {
         } else if (voiceInput.contains("light gray")) {
             color = Color.LTGRAY;
             hasColor = true;
-        }else if(voiceInput.contains("save") || voiceInput.contains("safe") || voiceInput.contains("spades")){
+        } else if (voiceInput.contains("save") || voiceInput.contains("safe") || voiceInput.contains("spades") || voiceInput.contains("fake") || voiceInput.contains("saint")) {
             Bitmap bitmap = view.viewToBitmap(view);
+            /*try  {
+                File file = new File(getApplicationContext().getFilesDir(), "test.png");
+                if (file.createNewFile()) {
+                   // File gpxfile = new File(getApplicationContext().getFilesDir(), "test.txt");
+                   // Writer writer = new FileWriter(gpxfile);
+
+                    /*writer.append("test");
+                    writer.flush();
+                    writer.close();
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+                    byte[] bitmapdata = bos.toByteArray();
+
+                    FileOutputStream fos = new FileOutputStream(file);
+                    fos.write(bitmapdata);
+                    fos.flush();
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+
+            OutputStream os = null;
+            try {
+                File file = new File(getApplicationContext().getFilesDir(), "/image.png");
+                os = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+                bitmap.recycle(); // this is very important. make sure you always recycle your bitmap when you're done with it.
+                String screenGrabFilePath = file.getPath();
+                TwitterPost.tweet();
+            } catch(IOException e) {
+                bitmap.recycle(); // this is very important. make sure you always recycle your bitmap when you're done with it.
+                Log.e("combineImages", "problem combining images", e);
+            }
         }
 
         if (hasColor && voiceInput.contains("background") || voiceInput.contains("back from") || voiceInput.contains("spectrum") || voiceInput.contains("back rub") || voiceInput.contains("next round") || voiceInput.contains("text round")) {
@@ -181,4 +227,5 @@ public class MainActivity extends AppCompatActivity {
             view.clear();
         }
     }
+
 }
