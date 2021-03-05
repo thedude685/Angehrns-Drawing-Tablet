@@ -108,6 +108,7 @@ public class SimpleDrawingView extends View {
     }
 
     public void removeLastPair() {
-        pathColorList.remove(pathColorList.size() - 1);
+        if(pathColorList.size() > 0)
+            pathColorList.remove(pathColorList.size() - 1);
     }
 }
