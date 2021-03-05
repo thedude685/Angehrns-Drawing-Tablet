@@ -21,6 +21,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -47,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
         ImageView micButton = findViewById(R.id.micButton);
         ImageView saveButton = findViewById(R.id.save);
         ImageView twitterButton = findViewById(R.id.twitter);
-
-
+        ImageView backButton = findViewById(R.id.back);
+        ImageView clearButton = findViewById(R.id.clear);
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -104,12 +105,13 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        SimpleDrawingView view = findViewById(R.id.simpleDrawingView1);
 
         micButton.setOnClickListener(v -> speechRecognizer.startListening(speechRecognizerIntent));
-
-        saveButton.setOnClickListener(v -> saveImage(findViewById(R.id.simpleDrawingView1)));
-
+        saveButton.setOnClickListener(v -> saveImage(view));
         twitterButton.setOnClickListener(v -> tweet(getApplicationContext().getFilesDir() + "/image.png"));
+        backButton.setOnClickListener(v -> view.removeLastPair());
+        clearButton.setOnClickListener(v -> view.clear());
 
     }
 
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         boolean hasColor = false;
 
         //common false inputs will be validated to make user experience friendlier
-        if (voiceInput.contains("red") || voiceInput.contains("rhett") || voiceInput.contains("rent") || voiceInput.contains("right") || voiceInput.contains("wet")) {
+        if (voiceInput.contains("red") || voiceInput.contains("rhett") || voiceInput.contains("rent") || voiceInput.contains("right") || voiceInput.contains("wet") || voiceInput.contains("brett")) {
             color = Color.RED;
             hasColor = true;
         } else if (voiceInput.contains("blue") || voiceInput.contains("peru")) {
@@ -183,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void saveImage(SimpleDrawingView view){
+    public void saveImage(SimpleDrawingView view) {
 
         Bitmap bitmap = view.viewToBitmap(view);
 
@@ -193,16 +195,15 @@ public class MainActivity extends AppCompatActivity {
             os = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
             bitmap.recycle();
-        } catch(IOException e) {
+        } catch (IOException e) {
             bitmap.recycle();
             Log.e("combineImages", "problem combining images", e);
         }
     }
 
-    public void tweet(String filepath){
+    public void tweet(String filepath) {
 
         saveImage(findViewById(R.id.simpleDrawingView1));
         new Thread(() -> TwitterPost.tweet(filepath)).start();
     }
-
 }

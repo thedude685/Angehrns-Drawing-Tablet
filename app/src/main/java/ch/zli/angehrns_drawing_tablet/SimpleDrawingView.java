@@ -3,8 +3,10 @@ package ch.zli.angehrns_drawing_tablet;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
@@ -18,13 +20,17 @@ import java.util.List;
 public class SimpleDrawingView extends View {
     public static Paint drawPaint;
     private Path path = new Path();
+    public boolean isCleared = false;
+    Bitmap savedDrawing;
     List<Pair<Path, Integer>> pathColorList = new ArrayList<>();
+    Matrix matrix = new Matrix();
 
     public SimpleDrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setFocusable(true);
         setFocusableInTouchMode(true);
         setupPaint();
+        getSavedImage("/data/user/0/ch.zli.angehrns_drawing_tablet/files/image.png");
     }
 
     private void setupPaint() {
@@ -40,6 +46,10 @@ public class SimpleDrawingView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+
+        if (!isCleared) {
+            canvas.drawBitmap(savedDrawing, matrix, drawPaint);
+        }
 
         for (Pair<Path, Integer> path_color_entry : pathColorList) {
             drawPaint.setColor(path_color_entry.second);
@@ -76,25 +86,28 @@ public class SimpleDrawingView extends View {
 
     public void clear() {
         pathColorList.clear();
+        isCleared = true;
     }
 
     public Bitmap viewToBitmap(View view) {
 
-        int specWidth = View.MeasureSpec.makeMeasureSpec(900 /* any */, View.MeasureSpec.EXACTLY);
+        int specWidth = View.MeasureSpec.makeMeasureSpec(1700 /* any */, View.MeasureSpec.EXACTLY);
         view.measure(specWidth, specWidth);
         int questionWidth = view.getMeasuredWidth();
 
-        Bitmap b = Bitmap.createBitmap( questionWidth, questionWidth, Bitmap.Config.ARGB_8888);
+        Bitmap b = Bitmap.createBitmap(questionWidth, questionWidth, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
         c.drawColor(Color.WHITE);
         view.layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
         view.draw(c);
         return b;
-
     }
 
-    public void getSavedImage(){
+    public void getSavedImage(String filepath) {
+        savedDrawing = BitmapFactory.decodeFile(filepath);
+    }
 
+    public void removeLastPair() {
+        pathColorList.remove(pathColorList.size() - 1);
     }
 }
-
