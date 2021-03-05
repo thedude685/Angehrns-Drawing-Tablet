@@ -1,5 +1,6 @@
 package ch.zli.angehrns_drawing_tablet;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -46,6 +47,7 @@ public class SimpleDrawingView extends View {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -72,14 +74,27 @@ public class SimpleDrawingView extends View {
         return true;
     }
 
-    public void clear(){
+    public void clear() {
         pathColorList.clear();
     }
 
     public Bitmap viewToBitmap(View view) {
-        return Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
-        //Canvas canvas = new Canvas(bitmap);
-        //view.draw(canvas);
+
+        int specWidth = View.MeasureSpec.makeMeasureSpec(900 /* any */, View.MeasureSpec.EXACTLY);
+        view.measure(specWidth, specWidth);
+        int questionWidth = view.getMeasuredWidth();
+
+        Bitmap b = Bitmap.createBitmap( questionWidth, questionWidth, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        c.drawColor(Color.WHITE);
+        view.layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
+        view.draw(c);
+        return b;
+
+    }
+
+    public void getSavedImage(){
+
     }
 }
 

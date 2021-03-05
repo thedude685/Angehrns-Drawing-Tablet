@@ -2,10 +2,8 @@ package ch.zli.angehrns_drawing_tablet;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
-import android.content.ContextWrapper;
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -16,29 +14,17 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Writer;
 import java.util.ArrayList;
 
 
@@ -47,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     public static final Integer RecordAudioRequestCode = 1;
     private SpeechRecognizer speechRecognizer;
     private TextView editText;
-    private Button micButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +44,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         editText = findViewById(R.id.TextView);
-        micButton = findViewById(R.id.button);
+        ImageView micButton = findViewById(R.id.micButton);
+        ImageView saveButton = findViewById(R.id.save);
+        ImageView twitterButton = findViewById(R.id.twitter);
+
+
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         final Intent speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -72,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
 
+            @SuppressLint("SetTextI18n")
             @Override
             public void onBeginningOfSpeech() {
                 editText.setText("Listening...");
@@ -99,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResults(Bundle bundle) {
-                micButton.setText("Results received");
                 ArrayList<String> data = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
                 editText.setText(data.get(0));
                 changeColor(data.get(0));
@@ -116,10 +105,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        micButton.setOnClickListener(v -> {
-            micButton.setText("Listening");
-            speechRecognizer.startListening(speechRecognizerIntent);
-        });
+        micButton.setOnClickListener(v -> speechRecognizer.startListening(speechRecognizerIntent));
+
+        saveButton.setOnClickListener(v -> saveImage(findViewById(R.id.simpleDrawingView1)));
+
+        twitterButton.setOnClickListener(v -> tweet(getApplicationContext().getFilesDir() + "/image.png"));
 
     }
 
@@ -181,43 +171,8 @@ public class MainActivity extends AppCompatActivity {
             color = Color.LTGRAY;
             hasColor = true;
         } else if (voiceInput.contains("save") || voiceInput.contains("safe") || voiceInput.contains("spades") || voiceInput.contains("fake") || voiceInput.contains("saint")) {
-            Bitmap bitmap = view.viewToBitmap(view);
-            /*try  {
-                File file = new File(getApplicationContext().getFilesDir(), "test.png");
-                if (file.createNewFile()) {
-                   // File gpxfile = new File(getApplicationContext().getFilesDir(), "test.txt");
-                   // Writer writer = new FileWriter(gpxfile);
-
-                    /*writer.append("test");
-                    writer.flush();
-                    writer.close();
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
-                    byte[] bitmapdata = bos.toByteArray();
-
-                    FileOutputStream fos = new FileOutputStream(file);
-                    fos.write(bitmapdata);
-                    fos.flush();
-                    fos.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
-
-            OutputStream os = null;
-            try {
-                File file = new File(getApplicationContext().getFilesDir(), "/image.png");
-                os = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
-                bitmap.recycle(); // this is very important. make sure you always recycle your bitmap when you're done with it.
-                String screenGrabFilePath = file.getPath();
-                TwitterPost.tweet();
-            } catch(IOException e) {
-                bitmap.recycle(); // this is very important. make sure you always recycle your bitmap when you're done with it.
-                Log.e("combineImages", "problem combining images", e);
-            }
+            saveImage(view);
         }
-
         if (hasColor && voiceInput.contains("background") || voiceInput.contains("back from") || voiceInput.contains("spectrum") || voiceInput.contains("back rub") || voiceInput.contains("next round") || voiceInput.contains("text round")) {
             view.getRootView().setBackgroundColor(color);
         } else {
@@ -226,6 +181,27 @@ public class MainActivity extends AppCompatActivity {
         if (voiceInput.contains("clear")) {
             view.clear();
         }
+    }
+
+    public void saveImage(SimpleDrawingView view){
+
+        Bitmap bitmap = view.viewToBitmap(view);
+
+        OutputStream os;
+        try {
+            File file = new File(getApplicationContext().getFilesDir(), "/image.png");
+            os = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+            bitmap.recycle();
+        } catch(IOException e) {
+            bitmap.recycle();
+            Log.e("combineImages", "problem combining images", e);
+        }
+    }
+
+    public void tweet(String filepath){
+
+        new Thread(() -> TwitterPost.tweet(filepath)).start();
     }
 
 }

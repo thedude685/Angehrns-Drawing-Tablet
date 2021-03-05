@@ -1,21 +1,30 @@
 package ch.zli.angehrns_drawing_tablet;
 
 
+import java.io.File;
+
+import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
+import twitter4j.conf.ConfigurationBuilder;
 
 public class TwitterPost {
 
-    //static String consumerKeyStr = "MJeQLvIhRm1TvNVLHdywWVYZw";
-    //static String consumerSecretStr = "x71coSa5VqKDecCuXJY2yOb10eJRSlgNrGSd4g87K04JR8fdrz";
-    static String consumerKeyStr = "VtDmmOX6P9D5BQxJCvacAnZPB";
-    static String consumerSecretStr = "06Yo7DFjprzB44teAsPEHWbIQtExnq2ASKVevcVORsyaZUoQQ0";
-    static String accessTokenStr = "1367612466356752388-9fOMOB6wKLr5sP0C2KR7pHWujb8X8a";
-    static String accessTokenSecretStr = "tyEC2p0TPi9OJpSSwEDEu5IeI14OneOIdUU8c4rNrpj23";
+    static String consumerKeyStr = "2SWQWE4GqNKY1IBachVGFOt8A";
+    static String consumerSecretStr = "6eeX9Kj7ENZSHbXfvep0gsRGzI4Poyec3rwWMCEDbHwGWZPtBn";
+    static String accessTokenStr = "1367612466356752388-wukgGrHGnPewWPECA0iSswCui3kUuJ";
+    static String accessTokenSecretStr = "skvr31c95hmkF0e0assj53knaUWhWGLxtHTNf1LLK92h3 ";
 
-    public static void tweet() {
+    public static void tweet(String filepath) {
+
+        ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setDebugEnabled(true)
+                .setOAuthConsumerKey(consumerKeyStr)
+                .setOAuthConsumerSecret(consumerSecretStr)
+                .setOAuthAccessToken(accessTokenStr)
+                .setOAuthAccessTokenSecret(accessTokenSecretStr);
 
         try {
             Twitter twitter = new TwitterFactory().getInstance();
@@ -26,9 +35,12 @@ public class TwitterPost {
 
             twitter.setOAuthAccessToken(accessToken);
 
-            twitter.updateStatus("Hey I'm drawing with Angehrns_drawing_tablet");
+            File file = new File(filepath);
 
-            System.out.println("Successfully updated the status in Twitter.");
+            StatusUpdate status = new StatusUpdate("Hey I'm drawing with Angehrns_drawing_tablet");
+            status.setMedia(file); // set the image to be uploaded here.
+            twitter.updateStatus(status);
+
         } catch (TwitterException te) {
             te.printStackTrace();
         }
